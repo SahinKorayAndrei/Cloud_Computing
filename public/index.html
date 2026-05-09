@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Centrul de Știri despre Fotbal | Cloud Hub</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --pitch-green: #2ecc71;
+            --dark-bg: #0f0f0f;
+            --card-bg: #1a1a1a;
+            --text-white: #ffffff;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--dark-bg);
+            color: var(--text-white);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .container { 
+            width: 100%; 
+            max-width: 900px; 
+            text-align: center; 
+            margin-top: 50px;
+        }
+
+        h1 { color: var(--pitch-green); font-size: 3rem; margin-bottom: 10px; font-weight: 700; text-transform: uppercase; }
+        .promo-text { 
+            color: #ccc; 
+            font-size: 1.1rem; 
+            margin-bottom: 40px; 
+            line-height: 1.6;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .search-box {
+            display: flex;
+            background: var(--card-bg);
+            padding: 8px;
+            border-radius: 50px;
+            border: 2px solid #333;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+        }
+
+        input {
+            flex: 1;
+            background: transparent;
+            border: none;
+            color: white;
+            padding: 12px 25px;
+            font-size: 18px;
+            outline: none;
+        }
+
+        button {
+            background: var(--pitch-green);
+            color: black;
+            border: none;
+            padding: 12px 35px;
+            border-radius: 40px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        button:hover { transform: scale(1.05); }
+
+
+        .suggestions-container {
+            margin-bottom: 40px;
+            background: rgba(46, 204, 113, 0.05);
+            padding: 15px;
+            border-radius: 15px;
+        }
+        .suggestions-title { font-size: 0.9rem; color: #666; margin-bottom: 10px; font-weight: 600; }
+        .suggestion-group { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; }
+        .suggestion-link { 
+            color: var(--pitch-green); 
+            cursor: pointer; 
+            font-size: 0.95rem; 
+            padding: 5px 12px;
+            border: 1px solid rgba(46, 204, 113, 0.3);
+            border-radius: 20px;
+            transition: all 0.3s;
+        }
+        .suggestion-link:hover { background: var(--pitch-green); color: black; }
+
+
+        .result-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; text-align: left; }
+        .main-card { grid-column: span 2; background: var(--card-bg); border-radius: 20px; padding: 30px; display: flex; align-items: center; gap: 30px; border-bottom: 4px solid var(--pitch-green); }
+        .team-logo { width: 110px; height: 110px; object-fit: contain; }
+        
+        .form-dot { display: inline-block; width: 26px; height: 26px; border-radius: 50%; text-align: center; line-height: 26px; font-weight: 700; margin-right: 6px; font-size: 11px; }
+        .win { background: #2ecc71; color: black; }
+        .loss { background: #e74c3c; color: white; }
+        .draw { background: #f1c40f; color: black; }
+
+        .stadium-card { background: var(--card-bg); border-radius: 20px; overflow: hidden; border: 1px solid #333; }
+        .stadium-img { width: 100%; height: 190px; object-fit: cover; }
+        .news-item { background: #222; padding: 18px; margin-bottom: 12px; border-radius: 12px; transition: 0.3s; }
+        .news-item a { color: var(--pitch-green); text-decoration: none; font-weight: 600; font-size: 1.05rem; }
+
+        .loader { display: none; width: 45px; height: 45px; border: 5px solid #222; border-top: 5px solid var(--pitch-green); border-radius: 50%; animation: spin 1s linear infinite; margin: 30px auto; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>CENTRUL DE ȘTIRI DESPRE FOTBAL</h1>
+    <p class="promo-text">
+        Ești gata să domini terenul informației? 🏆 Aici poți găsi absolut orice detaliu legat de universul fotbalului, de la statistici de performanță în timp real până la cele mai fierbinți știri din Cloud. Caută-ți echipa favorită și explorează datele direct din inima jocului!
+    </p>
+
+    <div class="search-box">
+        <input type="text" id="teamInput" placeholder="Introdu numele echipei (ex: FC Barcelona)...">
+        <button onclick="searchTeam()">EXPLOREAZĂ</button>
+    </div>
+
+    <div class="suggestions-container">
+        <div class="suggestions-title">ECHIPE POPULARE</div>
+        <div class="suggestion-group">
+            <span class="suggestion-link" onclick="quickSearch('FC Barcelona')">Barcelona</span>
+            <span class="suggestion-link" onclick="quickSearch('Real Madrid')">Real Madrid</span>
+            <span class="suggestion-link" onclick="quickSearch('PSG')">PSG</span>
+            <span class="suggestion-link" onclick="quickSearch('Bayern Munich')">Bayern</span>
+            <span class="suggestion-link" onclick="quickSearch('Liverpool')">Liverpool</span>
+            <span class="suggestion-link" onclick="quickSearch('Arsenal')">Arsenal</span>
+            <span class="suggestion-link" onclick="quickSearch('FCSB')">FCSB</span>
+        </div>
+    </div>
+
+    <div id="loader" class="loader"></div>
+    <div id="results"></div>
+</div>
+
+<script>
+    function quickSearch(n) { document.getElementById('teamInput').value = n; searchTeam(); }
+
+   async function searchTeam() {
+    const team = document.getElementById('teamInput').value;
+    const resDiv = document.getElementById('results');
+    const loader = document.getElementById('loader');
+    
+    if(!team) return;
+    resDiv.innerHTML = '';
+    loader.style.display = 'block';
+
+    try {
+        const r = await fetch("/api/football-news?team=" + encodeURIComponent(team));
+        const d = await r.json();
+        loader.style.display = 'none';
+
+        if(d.error) { 
+            resDiv.innerHTML = "<div style='color:#e74c3c; padding:20px; background:rgba(231,76,60,0.1); border-radius:10px;'>⚠️ " + d.error + "</div>"; 
+            return; 
+        }
+
+        const teamName = d.team.name;
+        const teamId = d.team.id;
+        const teamColor = d.team.teamColors?.primary || '#2ecc71';
+        const countryName = d.team.country?.name || "Internațional";
+
+        // Generez HTML pentru stiri
+        const articlesHtml = d.articles.map(a => 
+            "<div class='news-item' style='border-left: 5px solid " + teamColor + "'>" +
+                "<a href='" + a.url + "' target='_blank'>" + a.title + "</a>" +
+                "<div style='font-size:11px; color:#777; margin-top:8px;'>Sursă: " + a.source.name + " | " + new Date(a.publishedAt).toLocaleDateString() + "</div>" +
+            "</div>"
+        ).join('');
+
+        // Echipa și Țara 
+        resDiv.innerHTML = `
+            <div class="result-grid" style="display: block;">
+                <div class="main-card" style="border-bottom: 5px solid ${teamColor}; margin-bottom: 30px;">
+                    <img src="https://www.sofascore.com/api/v1/team/${teamId}/image" class="team-logo" onerror="this.src='https://via.placeholder.com/100?text=FC'">
+                    <div style="text-align: left;">
+                        <h2 style="margin:0; font-size: 2.5rem; color: ${teamColor}">${teamName}</h2>
+                        <div style="margin-top:10px;">
+                            <span style="font-size: 1.2rem; color: #aaa; font-weight: 400; letter-spacing: 1px;">${countryName}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="text-align: left;">
+                    <h3 style="border-left: 5px solid ${teamColor}; padding-left: 15px; margin-bottom: 25px; color: #fff; text-transform: uppercase; letter-spacing: 1px; font-size: 1.1rem;">
+                        📰 Ultimele Știri
+                    </h3>
+                    ${articlesHtml || '<p style="color:#666; padding-left:15px;">Nu există noutăți recente pentru această echipă.</p>'}
+                </div>
+            </div>
+        `;
+    } catch (e) {
+        loader.style.display = 'none';
+        resDiv.innerHTML = "<div style='color:red; padding:20px;'>Eroare critică la sincronizarea Cloud.</div>";
+    }
+}
+
+    document.getElementById('teamInput').addEventListener('keypress', function (e) {
+        if (e.key === 'Enter') searchTeam();
+    });
+</script>
+</body>
+</html>
